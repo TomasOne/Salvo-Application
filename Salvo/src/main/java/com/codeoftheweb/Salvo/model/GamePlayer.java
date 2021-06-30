@@ -28,6 +28,15 @@ public class GamePlayer {
 
     private LocalDateTime date;
 
+    public GamePlayer() {
+    }
+
+    public GamePlayer(Game game, Player player, LocalDateTime date) {
+        this.game = game;
+        this.player = player;
+        this.date = date;
+    }
+
     //GETTERS
     public Game getGame() {
         return game;
@@ -39,6 +48,10 @@ public class GamePlayer {
 
     public LocalDateTime getDate() {
         return date;
+    }
+
+    public long getId() {
+        return id;
     }
 
     //SETTERS
