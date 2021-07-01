@@ -1,14 +1,10 @@
 package com.codeoftheweb.Salvo.model;
 
 import org.hibernate.annotations.GenericGenerator;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class GamePlayer {
@@ -26,6 +22,11 @@ public class GamePlayer {
     @JoinColumn(name = "Player_id")
     private Player player;
 
+    @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
+    List<Ship> ships;
+
+
+
     private LocalDateTime date;
 
     public GamePlayer() {
@@ -35,6 +36,11 @@ public class GamePlayer {
         this.game = game;
         this.player = player;
         this.date = date;
+    }
+
+    public void addShip(Ship ship){
+        ship.setGamePlayer(this);
+        ships.add(ship);
     }
 
     //GETTERS
@@ -48,6 +54,10 @@ public class GamePlayer {
 
     public LocalDateTime getDate() {
         return date;
+    }
+
+    public List<Ship> getShips() {
+        return ships;
     }
 
     public long getId() {
