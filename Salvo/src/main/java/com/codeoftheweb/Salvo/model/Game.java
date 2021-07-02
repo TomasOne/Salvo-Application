@@ -58,7 +58,7 @@ public class Game {
 
     public List<GamePlayer> getGamePlayer()
     {
-        return  gamePlayer;
+            return  gamePlayer;
     }
 
 }
