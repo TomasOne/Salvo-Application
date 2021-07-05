@@ -13,7 +13,7 @@ public class Salvo  {
     private long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "salvo_id")
+    @JoinColumn(name = "gamePlayer_id")
     private  GamePlayer gamePlayer;
 
     @ElementCollection
@@ -56,4 +56,5 @@ public class Salvo  {
     public void setTurnId(Integer turnId) {
         this.turnId = turnId;
     }
+
 }

@@ -1,16 +1,13 @@
 package com.codeoftheweb.Salvo.controller;
 
-import com.codeoftheweb.Salvo.model.Game;
-import com.codeoftheweb.Salvo.model.GamePlayer;
-import com.codeoftheweb.Salvo.model.Player;
-import com.codeoftheweb.Salvo.model.Ship;
+import com.codeoftheweb.Salvo.model.*;
 import com.codeoftheweb.Salvo.repository.GamePlayerRepository;
 import com.codeoftheweb.Salvo.repository.GameRepository;
+import com.codeoftheweb.Salvo.repository.SalvoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +22,9 @@ public class SalvoController {
 
     @Autowired
     private GamePlayerRepository gamePlayRepo;
+
+    @Autowired
+    private SalvoRepository salvoRepo;
 
     @RequestMapping("/games")
     public List<Map<String, Object>> getGames()
@@ -42,6 +42,7 @@ public class SalvoController {
         Game game = gamePlay.getGame();
         Map<String, Object> shipDTO = gameDTO(game);
         shipDTO.put("ships", gamePlay.getShips().stream().map(this::shipDTO).collect(Collectors.toList()));
+        shipDTO.put("salvoes", game.getGamePlayer().stream().flatMap(x -> x.getSalvo().stream().map(this::salvoDTO)).collect(Collectors.toList()));
         return shipDTO;
     }
 
@@ -58,7 +59,6 @@ public class SalvoController {
         Map<String, Object> gamePlayerDTO = new LinkedHashMap<String, Object>();
         gamePlayerDTO.put("id", gamePlayer.getId());
         gamePlayerDTO.put("player", playerDTO(gamePlayer.getPlayer()));
-
         return  gamePlayerDTO;
     }
 
@@ -76,6 +76,15 @@ public class SalvoController {
         shipDTO.put("type", ship.getShipType());
         shipDTO.put("locations", ship.getLocation());
         return shipDTO;
+    }
+
+    private Map<String, Object> salvoDTO(Salvo salvo)
+    {
+        Map<String, Object> salvoDTO = new LinkedHashMap<>();
+        salvoDTO.put("locations", salvo.getSalvoLocation()) ;
+        salvoDTO.put("turn", salvo.getTurnId());
+        salvoDTO.put("player", salvo.getGamePlayer().getId());
+        return  salvoDTO;
     }
 
 }

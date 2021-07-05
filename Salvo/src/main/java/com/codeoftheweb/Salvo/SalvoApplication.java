@@ -1,13 +1,7 @@
 package com.codeoftheweb.Salvo;
 
-import com.codeoftheweb.Salvo.model.Game;
-import com.codeoftheweb.Salvo.model.GamePlayer;
-import com.codeoftheweb.Salvo.model.Player;
-import com.codeoftheweb.Salvo.model.Ship;
-import com.codeoftheweb.Salvo.repository.GamePlayerRepository;
-import com.codeoftheweb.Salvo.repository.GameRepository;
-import com.codeoftheweb.Salvo.repository.PlayerRepository;
-import com.codeoftheweb.Salvo.repository.ShipRepository;
+import com.codeoftheweb.Salvo.model.*;
+import com.codeoftheweb.Salvo.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,7 +18,7 @@ public class SalvoApplication {
 	}
 
 	@Bean//Palabra reservada para JavaBean. Se utiliza para suministrar datos a una clase sin que la clase tenga que crearlos
-	public CommandLineRunner initData(PlayerRepository repository, GameRepository gameRepo, GamePlayerRepository gameP_repo, ShipRepository shipRepo) {
+	public CommandLineRunner initData(PlayerRepository repository, GameRepository gameRepo, GamePlayerRepository gameP_repo, ShipRepository shipRepo, SalvoRepository salvoRepo) {
 		return (args) -> {
 			//Creación de jugadores y partidas
 			Player player2 = new Player("test@gmail.com");
@@ -36,6 +30,10 @@ public class SalvoApplication {
 			Ship ship1 = new Ship(gamePlayer1,"Destroyer", List.of("A1","A2","A3"));
 			Ship ship2 = new Ship(gamePlayer1,"Submarine", List.of("F1","G1","H1"));
 			Ship ship3 = new Ship(gamePlayer1,"Battleship	", List.of("J7","J8","J9","J10"));
+			Salvo salvo1 = new Salvo(gamePlayer1,List.of("A1","C3","D7"),1);
+			Salvo salvo2 = new Salvo(gamePlayer1,List.of("G1","G3","D6"),2);
+			Salvo salvo3 = new Salvo(gamePlayer2,List.of("A1","A2","A3"),1);
+			Salvo salvo4 = new Salvo(gamePlayer2,List.of("B4","C5","D6"),2);
 			// Agrega datos a nuestro repository y se envían a la DB
 			repository.save(player1);
 			repository.save(player2);
@@ -46,6 +44,10 @@ public class SalvoApplication {
 			shipRepo.save(ship1);
 			shipRepo.save(ship2);
 			shipRepo.save(ship3);
+			salvoRepo.save(salvo1);
+			salvoRepo.save(salvo2);
+			salvoRepo.save(salvo3);
+			salvoRepo.save(salvo4);
 		};
 	}
 }
