@@ -4,6 +4,7 @@ import com.codeoftheweb.Salvo.model.*;
 import com.codeoftheweb.Salvo.repository.GamePlayerRepository;
 import com.codeoftheweb.Salvo.repository.GameRepository;
 import com.codeoftheweb.Salvo.repository.SalvoRepository;
+import com.codeoftheweb.Salvo.repository.ScoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,13 +27,15 @@ public class SalvoController {
     @Autowired
     private SalvoRepository salvoRepo;
 
+    @Autowired
+    private ScoreRepository scoreRepo;
+
     @RequestMapping("/games")
     public List<Map<String, Object>> getGames()
     {
         List<Game> gameList = gameRepo.findAll();
-
-        Map<String, Game> gameDTO = new LinkedHashMap<>();
-
+        Map<String, Object> gameDTO = new LinkedHashMap<>();
+        gameDTO.put("games", gameList.stream().map(this::gameDTO).collect(Collectors.toList()));
         return gameList.stream().map(this::gameDTO).collect(Collectors.toList());
     }
 
@@ -51,6 +54,12 @@ public class SalvoController {
         gameDto.put("id", game.getId());
         gameDto.put("created", game.getData());
         gameDto.put("gamePlayers", game.getGamePlayer().stream().map(this::gamePlayerDTO).collect(Collectors.toList()));
+        gameDto.put("scores", game.getGamePlayer().stream().map(x ->{
+            if (x.getScore().isPresent()) {
+                return scoreDTO(x.getScore().get());
+            }
+            else {return "partida en progreso";}
+            }).collect(Collectors.toList()));
         return gameDto;
     }
 
@@ -85,6 +94,15 @@ public class SalvoController {
         salvoDTO.put("turn", salvo.getTurnId());
         salvoDTO.put("player", salvo.getGamePlayer().getId());
         return  salvoDTO;
+    }
+
+    private Map<String, Object> scoreDTO(Score score)
+    {
+        Map<String, Object> scoreDTO = new LinkedHashMap<>();
+        scoreDTO.put("score", score.getScore());
+        scoreDTO.put("date", score.getFinishDate());
+        scoreDTO.put("player", score.getPlayer().getId());
+        return scoreDTO;
     }
 
 }

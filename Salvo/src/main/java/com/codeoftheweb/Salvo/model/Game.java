@@ -24,6 +24,9 @@ public class Game {
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     List<GamePlayer> gamePlayer;
 
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    Set<Score> scores;
+
     public void addGamePlayer(GamePlayer gamePlayers)
     {
         gamePlayers.setGame(this);

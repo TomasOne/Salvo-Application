@@ -5,6 +5,10 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static java.util.stream.Collectors.toList;
 
 @Entity
@@ -19,6 +23,9 @@ public class Player {
 
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     List<GamePlayer> gamePlayer;
+
+    @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
+    Set<Score> scores;
 
     public void addGamePlayer(GamePlayer gamePlayers)
     {
@@ -44,6 +51,10 @@ public class Player {
 
     public long getId() {
         return id;
+    }
+    public Optional<Score> getScores(Game game)
+    {
+        return this.scores.stream().filter(x -> x.getGame().equals(game)).findFirst();
     }
 
     //SETTER

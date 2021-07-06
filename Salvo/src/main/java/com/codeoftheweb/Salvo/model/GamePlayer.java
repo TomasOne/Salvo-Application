@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -27,6 +28,7 @@ public class GamePlayer {
 
     @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
     Set<Salvo> salvos;
+
 
 
 
@@ -69,6 +71,10 @@ public class GamePlayer {
     }
     public long getId() {
         return id;
+    }
+    public Optional<Score> getScore()
+    {
+        return this.player.getScores(game);
     }
     //SETTERS
     public void setGame(Game game) {
