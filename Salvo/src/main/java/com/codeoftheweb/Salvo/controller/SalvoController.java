@@ -31,12 +31,12 @@ public class SalvoController {
     private ScoreRepository scoreRepo;
 
     @RequestMapping("/games")
-    public List<Map<String, Object>> getGames()
+    public Map<String, Object> getGames()
     {
         List<Game> gameList = gameRepo.findAll();
-        Map<String, Object> gameDTO = new LinkedHashMap<>();
-        gameDTO.put("games", gameList.stream().map(this::gameDTO).collect(Collectors.toList()));
-        return gameList.stream().map(this::gameDTO).collect(Collectors.toList());
+        Map<String, Object> auxDTO = new LinkedHashMap<>();
+        auxDTO.put("games", gameList.stream().map(this::gameDTO).collect(Collectors.toList()));
+        return auxDTO;
     }
 
     @RequestMapping("/game_view/{id}")
