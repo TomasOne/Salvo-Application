@@ -17,7 +17,8 @@ public class SalvoApplication {
 		SpringApplication.run(SalvoApplication.class, args);
 	}
 
-	@Bean//Palabra reservada para JavaBean. Se utiliza para suministrar datos a una clase sin que la clase tenga que crearlos
+	@Bean//Palabra reservada para JavaBean. Hace una anotación del Hibernate y mapea las entidades. Es la conexión entre las clases y la base de datos.
+		// Incluye un metodo en el entorno de la aplicación
 	public CommandLineRunner initData(PlayerRepository repository, GameRepository gameRepo, GamePlayerRepository gameP_repo, ShipRepository shipRepo, SalvoRepository salvoRepo, ScoreRepository scoreRepo) {
 		return (args) -> {
 			//Creación de jugadores y partidas

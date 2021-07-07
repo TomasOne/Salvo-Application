@@ -33,7 +33,9 @@ public class SalvoController {
     @RequestMapping("/games")
     public Map<String, Object> getGames()
     {
+        //Se crea al lista de juegos y se trae todo desde el repository
         List<Game> gameList = gameRepo.findAll();
+        //Creamos un nuevo map y se lo carga con el DTO de game. Esto no devuelve todo por el uso de "cascada"
         Map<String, Object> auxDTO = new LinkedHashMap<>();
         auxDTO.put("games", gameList.stream().map(this::gameDTO).collect(Collectors.toList()));
         return auxDTO;
@@ -95,7 +97,7 @@ public class SalvoController {
         salvoDTO.put("player", salvo.getGamePlayer().getId());
         return  salvoDTO;
     }
-
+    
     private Map<String, Object> scoreDTO(Score score)
     {
         Map<String, Object> scoreDTO = new LinkedHashMap<>();

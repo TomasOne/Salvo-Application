@@ -52,8 +52,8 @@ public class Player {
     public long getId() {
         return id;
     }
-    public Optional<Score> getScores(Game game)
-    {
+
+    public Optional<Score> getScores(Game game) {
         return this.scores.stream().filter(x -> x.getGame().equals(game)).findFirst();
     }
 
