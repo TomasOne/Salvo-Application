@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,20 +38,24 @@ public class SalvoController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @RequestMapping(path = "/players", method = RequestMethod.POST)
-    public ResponseEntity<Object> register(
+    @PostMapping("/players")
+    public ResponseEntity<Map<String, Object>> register(
             @RequestParam String email, @RequestParam String password) {
-
         if (email.isEmpty() || password.isEmpty()) {
-            return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(makeMap("error", "Missing data"), HttpStatus.FORBIDDEN);
         }
-
-        if (playerRepo.findByUserName(email) !=  null) {
-            return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
+        if (playerRepo.findByUserName(email) != null) {
+            return new ResponseEntity<>(makeMap("error", "Username already exists"), HttpStatus.CONFLICT);
         }
+        playerRepo.save(new Player(email, passwordEncoder.encode(password)));
 
-        playerRepo.save(new Player(email,passwordEncoder.encode(password)));
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(makeMap("message", "success, player created"), HttpStatus.CREATED);
+    }
+
+    private Map<String, Object> makeMap(String key, Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        return map;
     }
 
     public Player currentPlayer(Authentication authentication){
