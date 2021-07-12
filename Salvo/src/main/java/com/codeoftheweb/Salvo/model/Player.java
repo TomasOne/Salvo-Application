@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -20,6 +19,7 @@ public class Player {
     private long id;
 
     private String userName;
+    private String password;
 
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     List<GamePlayer> gamePlayer;
@@ -40,8 +40,9 @@ public class Player {
 
     public  Player(){}
 
-    public Player(String userName) {
+    public Player(String userName, String password) {
         this.userName = userName;
+        this.password = password;
     }
 
     //GETTER
@@ -53,6 +54,10 @@ public class Player {
         return id;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public Optional<Score> getScores(Game game) {
         return this.scores.stream().filter(x -> x.getGame().equals(game)).findFirst();
     }
@@ -60,5 +65,9 @@ public class Player {
     //SETTER
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
