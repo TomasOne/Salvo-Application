@@ -132,7 +132,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 				.antMatchers("/web/**").permitAll()
-				.antMatchers("/api/games").permitAll()
+				.antMatchers("/api/games", "/api/game_view/**").permitAll()
 				.antMatchers(HttpMethod.POST, "/api/players").permitAll()
 				.antMatchers("/admin/**").hasAuthority("ADMIN")
 				.antMatchers("/**").hasAuthority("USER");
