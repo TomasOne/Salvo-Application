@@ -17,19 +17,19 @@ public class Ship {
     @JoinColumn(name = "gamePlayer_id")
     private GamePlayer gamePlayer;
 
-    private String shipType;
+    private String type;
 
     @ElementCollection
     @Column(name = "location")
-    private List<String> shipLocation;
+    private List<String> shipLocations;
 
     public Ship() {
     }
 
-    public Ship(GamePlayer gamePlayer, String shipType, List<String> shipLocation) {
+    public Ship(GamePlayer gamePlayer, String shipType, List<String> shipLocations) {
         this.gamePlayer = gamePlayer;
-        this.shipType = shipType;
-        this.shipLocation = shipLocation;
+        this.type = shipType;
+        this.shipLocations = shipLocations;
     }
 
     //GETTERS
@@ -38,12 +38,12 @@ public class Ship {
         return gamePlayer;
     }
 
-    public String getShipType() {
-        return shipType;
+    public String getType() {
+        return type;
     }
 
-    public List<String> getLocation() {
-        return shipLocation;
+    public List<String> getShipLocations() {
+        return shipLocations;
     }
 
     //SETTERS
@@ -52,11 +52,12 @@ public class Ship {
         this.gamePlayer = gamePlayer;
     }
 
-    public void setShipType(String shipType) {
-        this.shipType = shipType;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public void setLocation(List<String> location) {
-        this.shipLocation = location;
+    public void setShipLocations(List<String> shipLocations) {
+        this.shipLocations = shipLocations;
     }
+
 }

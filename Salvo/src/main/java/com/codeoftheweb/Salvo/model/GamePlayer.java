@@ -1,9 +1,9 @@
 package com.codeoftheweb.Salvo.model;
 
 import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -43,9 +43,11 @@ public class GamePlayer {
         this.date = date;
     }
 
-    public void addShip(Ship ship){
-        ship.setGamePlayer(this);
-        ships.add(ship);
+    public void addShip(Set<Ship> ships){
+        ships.forEach(ship -> {
+            ship.setGamePlayer(this);
+        this.ships.add(ship);
+    });
     }
 
     public void addSalvo(Salvo salvo){

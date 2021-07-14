@@ -37,6 +37,9 @@ public class SalvoController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    ShipRepository shipRepository;
+
     @RequestMapping(path = "/players", method = RequestMethod.POST)
     public ResponseEntity<Object> register(
             @RequestParam String email, @RequestParam String password) {
@@ -143,6 +146,49 @@ public class SalvoController {
         return response;
     }
 
+    @GetMapping("games/players/{gamePlayerId}/ships")
+    public Map<String, Object> getShips(@PathVariable Long gamePlayerId){
+        return makeMap("ships", gamePlayRepo.getById(gamePlayerId).getShips().stream().map(this::shipDTO).collect(Collectors.toList()));
+
+    }
+    @PostMapping("games/players/{gamePlayerId}/ships")
+    public ResponseEntity<Map<String, Object>> placeShips(@PathVariable Long gamePlayerId, @RequestBody Set<Ship> ships,Authentication authentication ) {
+
+        ResponseEntity<Map<String, Object>> response;
+        Optional<GamePlayer> gp = gamePlayRepo.findById(gamePlayerId);
+        Player currentPlayer = playerRepo.findByUserName(authentication.getName());
+
+        if (isGuest(authentication)) {
+
+            response = new ResponseEntity<>(makeMap("error", "no player logged in"), HttpStatus.UNAUTHORIZED);
+        } else if (!gp.isPresent()) {
+
+            response = new ResponseEntity<>(makeMap("error", "Game Player ID doesn't exist"), HttpStatus.UNAUTHORIZED);
+        } else if (gp.get().getPlayer().getId() != currentPlayer.getId()) {
+
+            response = new ResponseEntity<>(makeMap("error", "the current user is not the game player the ID references"), HttpStatus.UNAUTHORIZED);
+        } else if (gp.get().getShips().size() > 0) {
+
+            response = new ResponseEntity<>(makeMap("error", "user already has ships placed"), HttpStatus.FORBIDDEN);
+
+        }
+        else {
+            if (ships.size() > 0 )
+            {
+                for (Ship ship:ships){
+                    shipRepository.save(new Ship(gp.get(), ship.getType(), ship.getShipLocations()));
+                }
+
+                response = new ResponseEntity<>(makeMap("OK", "success"), HttpStatus.CREATED);
+            }
+            else
+            {
+                response = new ResponseEntity<>(makeMap("error", "No ship sended"), HttpStatus.FORBIDDEN);
+            }
+        }
+        return  response;
+    }
+
     private Map<String, Object> makeMap(String key, Object value) {
         Map<String, Object> map = new HashMap<>();
         map.put(key, value);
@@ -192,8 +238,8 @@ public class SalvoController {
     private  Map<String, Object> shipDTO(Ship ship)
     {
         Map<String, Object> shipDTO = new LinkedHashMap<>();
-        shipDTO.put("type", ship.getShipType());
-        shipDTO.put("locations", ship.getLocation());
+        shipDTO.put("type", ship.getType());
+        shipDTO.put("locations", ship.getShipLocations());
         return shipDTO;
     }
 

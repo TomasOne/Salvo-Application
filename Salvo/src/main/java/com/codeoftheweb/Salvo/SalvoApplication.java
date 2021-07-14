@@ -30,7 +30,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
-
 @SpringBootApplication
 public class SalvoApplication extends SpringBootServletInitializer {
 
@@ -50,7 +49,7 @@ public class SalvoApplication extends SpringBootServletInitializer {
 	// Incluye un metodo en el entorno de la aplicación
 	public CommandLineRunner initData(PlayerRepository repository, GameRepository gameRepo, GamePlayerRepository gameP_repo, ShipRepository shipRepo, SalvoRepository salvoRepo, ScoreRepository scoreRepo) {
 		return (args) -> {
-			//Creación de jugadores y partidas
+			//Creaciónes
 			Player player2 = new Player("test@gmail.com", passwordEncoder.encode("calabaza123"));
 			Player player1 = new Player("test00@gmail.com", passwordEncoder.encode("salamandra"));
 			Player player3 = new Player("prueba3", passwordEncoder.encode("cafetera"));
