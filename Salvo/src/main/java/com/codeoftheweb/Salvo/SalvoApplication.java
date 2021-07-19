@@ -87,10 +87,10 @@ public class SalvoApplication extends SpringBootServletInitializer {
 			shipRepo.save(ship3);
 			shipRepo.save(ship4);
 			shipRepo.save(ship5);
-			salvoRepo.save(salvo1);
+			/*salvoRepo.save(salvo1);
 			salvoRepo.save(salvo2);
 			salvoRepo.save(salvo3);
-			salvoRepo.save(salvo4);
+			salvoRepo.save(salvo4);*/
 			scoreRepo.save(score1);
 			scoreRepo.save(score2);
 			scoreRepo.save(score3);

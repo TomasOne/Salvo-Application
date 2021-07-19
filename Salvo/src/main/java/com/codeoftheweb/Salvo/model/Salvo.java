@@ -18,7 +18,7 @@ public class Salvo  {
 
     @ElementCollection
     @JoinColumn(name = "salvoLocation")
-    private List<String> salvoLocation;
+    private List<String> salvoLocations;
 
     private Integer turnId;
 
@@ -27,7 +27,7 @@ public class Salvo  {
 
     public Salvo(GamePlayer gamePlayer, List<String> salvoLocation, Integer turnId) {
         this.gamePlayer = gamePlayer;
-        this.salvoLocation = salvoLocation;
+        this.salvoLocations = salvoLocation;
         this.turnId = turnId;
     }
 
@@ -36,8 +36,8 @@ public class Salvo  {
         return gamePlayer;
     }
 
-    public List<String> getSalvoLocation() {
-        return salvoLocation;
+    public List<String> getSalvoLocations() {
+        return salvoLocations;
     }
 
     public Integer getTurnId() {
@@ -49,8 +49,8 @@ public class Salvo  {
         this.gamePlayer = gamePlayer;
     }
 
-    public void setSalvoLocation(List<String> salvoLocation) {
-        this.salvoLocation = salvoLocation;
+    public void setSalvoLocations(List<String> salvoLocation) {
+        this.salvoLocations = salvoLocation;
     }
 
     public void setTurnId(Integer turnId) {
