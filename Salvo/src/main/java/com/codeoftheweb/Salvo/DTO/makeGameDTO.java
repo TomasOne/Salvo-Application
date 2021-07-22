@@ -1,6 +1,8 @@
 package com.codeoftheweb.Salvo.DTO;
 
+import com.codeoftheweb.Salvo.Utils.Util;
 import com.codeoftheweb.Salvo.model.Game;
+import com.codeoftheweb.Salvo.model.GamePlayer;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -19,12 +21,12 @@ public class makeGameDTO {
         return gameDto;
     }
 
-    public static Map<String, Object> gameDTOAux(Game game){
+    public static Map<String, Object> gameDTOAux(GamePlayer gamePlayer){
         Map<String, Object> gameDto = new LinkedHashMap<String, Object>();
-        gameDto.put("id", game.getId());
-        gameDto.put("created", game.getData());
-        gameDto.put("gameState", "WAITINGFOROPP");
-        gameDto.put("gamePlayers", game.getGamePlayer().stream().map(makeGamePlayerDTO::gamePlayerDTO).collect(Collectors.toList()));
+        gameDto.put("id", gamePlayer.getGame().getId());
+        gameDto.put("created", gamePlayer.getGame().getData());
+        gameDto.put("gameState", Util.getState(gamePlayer));
+        gameDto.put("gamePlayers", gamePlayer.getGame().getGamePlayer().stream().map(makeGamePlayerDTO::gamePlayerDTO).collect(Collectors.toList()));
         return gameDto;
     }
 }

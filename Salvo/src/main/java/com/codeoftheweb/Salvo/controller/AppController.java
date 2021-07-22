@@ -138,10 +138,8 @@ public class AppController {
 
         // Trabajo los DTO desde GamePlayer
         // Desde game puedo utilizar el gameDTO que tiene acceso a los demás DTO
-        Map<String, Object> data = makeGameDTO.gameDTO(gamePlayRepo.getById(gamePlayerId).getGame());
+        Map<String, Object> data = makeGameDTO.gameDTOAux(gamePlayRepo.getById(gamePlayerId));
         Map<String, Object> hits = new LinkedHashMap<>();
-
-        data.put("gameState", "PLAY");
 
         data.put("ships", gamePlayRepo.getById(gamePlayerId).getShips().stream().map(makeShipDTO::shipDTO).collect(Collectors.toList()));
 
