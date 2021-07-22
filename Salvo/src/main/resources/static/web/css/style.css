@@ -129,8 +129,10 @@ body {
 }
 
 .hitCell {
-    background-image: url(../img/hit3.gif);
+    background-image: url(https://media.giphy.com/media/P7JmDW7IkB7TW/giphy.gif);
     background-size: cover;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
 }
 
 .verticalCenterFlex {
@@ -498,10 +500,20 @@ button:focus {
 }
 
 .oppTable {
-    background-image: url(../img/backships.gif);
-    opacity: 0.9;
-    color: #d8dce0;
-    font-size: 0.8em;
+    animation-name: animation;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    background-color: lightblue;
+    transition: transform 2s ease-in-out;
+}
+@keyframes animation {
+    from {
+        background-image: url(../img/backships.png);
+    }
+
+    to {
+        background-image: none;
+    }
 }
 
 .selfTdCell {

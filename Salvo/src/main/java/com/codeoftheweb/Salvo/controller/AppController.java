@@ -1,9 +1,14 @@
 package com.codeoftheweb.Salvo.controller;
 
-import com.codeoftheweb.Salvo.DTO.*;
-import com.codeoftheweb.Salvo.Utils.Util;
-import com.codeoftheweb.Salvo.model.*;
-import com.codeoftheweb.Salvo.repository.*;
+import com.codeoftheweb.Salvo.DTO.makeGameDTO;
+import com.codeoftheweb.Salvo.DTO.makeSalvoDTO;
+import com.codeoftheweb.Salvo.DTO.makeShipDTO;
+import com.codeoftheweb.Salvo.Utils.ShipType;
+import com.codeoftheweb.Salvo.model.GamePlayer;
+import com.codeoftheweb.Salvo.model.Salvo;
+import com.codeoftheweb.Salvo.model.Ship;
+import com.codeoftheweb.Salvo.repository.GamePlayerRepository;
+import com.codeoftheweb.Salvo.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,20 +31,148 @@ public class AppController {
     private PlayerRepository playerRepo;
 
     @RequestMapping("/game_view/{id}")
-    private ResponseEntity<Map<String, Object>> getGamePlayerId(@PathVariable Long id, Authentication authentication){
-        GamePlayer gamePlay = gamePlayRepo.findById(id).get();
-        Game game = gamePlay.getGame();
-        Player playerAuth = playerRepo.findByUserName(authentication.getName());
-        if(gamePlay.getPlayer().getId() == playerAuth.getId()) {
-            Map<String, Object> gameAux =  makeGameDTO.gameDTOAux(game);
-            gameAux.put("ships", gamePlay.getShips().stream().map(makeShipDTO::shipDTO).collect(Collectors.toList()));
-            gameAux.put("salvoes", game.getGamePlayer().stream().flatMap(x -> x.getSalvo().stream().map(makeSalvoDTO::salvoDTO)).collect(Collectors.toList()));
-            gameAux.put("hits", hitDTO());
+    private ResponseEntity<Map<String, Object>> getGamePlayerId(@PathVariable Long id, Authentication authentication) {
+        Optional<GamePlayer> gp = gamePlayRepo.findById(id);
+        ResponseEntity<Map<String, Object>> response;
+        Map<String, Object> aux = new LinkedHashMap<String  , Object>();
 
-            return new ResponseEntity<>(gameAux, HttpStatus.OK);
+        if (gp.isPresent()) { // Si no es null, realizo un llamado al metodo "getMapDTOs" que devuelve un mapa con los DTO.
+
+            if (authentication.getName().compareTo(gp.get().getPlayer().getUserName()) == 0) {
+
+                response = new ResponseEntity<>(getMapDTOs(id), HttpStatus.OK);
+            } else {
+
+                aux.put("ERROR", "Player not authorized");
+                response = new ResponseEntity<>(aux, HttpStatus.UNAUTHORIZED);
+            }
+
+        } else {
+
+            aux.put("ERROR", "gamePlayer does not exist");
+            response = new ResponseEntity<>(aux, HttpStatus.UNAUTHORIZED);
         }
-        else{
-            return new ResponseEntity<>(Util.makeMap("error", "User Not Authotized"), HttpStatus.UNAUTHORIZED);
+        return response;
+    }
+
+    private List<Map<String, Object>> hitsAndSinks(GamePlayer self, GamePlayer opponent) {
+
+        List<Map<String, Object>> dtoSupremo = new LinkedList<>();
+        int[] totalDamages = new int[5];
+
+        List<String> patrolBoatLocation = findShipLocations(self, ShipType.patrolboat);
+        List<String> destroyerLocation = findShipLocations(self, ShipType.destroyer);
+        List<String> submarineLocation = findShipLocations(self, ShipType.submarine);
+        List<String> battleShipLocation = findShipLocations(self, ShipType.battleship);
+        List<String> carrierLocationLocation = findShipLocations(self, ShipType.carrier);
+
+        for (Salvo salvo : opponent.getSalvo()) {
+            Map<String, Object> dtoHit = new LinkedHashMap<>();
+            Map<String, Object> damage = new LinkedHashMap<>();
+            System.out.println(salvo);
+            ArrayList<String> hitCellList = new ArrayList<>();
+            int[] hits = new int[5];
+            int missedShots = salvo.getSalvoLocations().size();
+
+            for (String location : salvo.getSalvoLocations()) {
+
+                if (carrierLocationLocation.contains(location)) {
+                    totalDamages[0]++;
+                    hits[0]++;
+                    hitCellList.add(location);
+                    missedShots--;
+                }
+                if (battleShipLocation.contains(location)) {
+
+                    totalDamages[1]++;
+                    hits[1]++;
+                    hitCellList.add(location);
+                    missedShots--;
+                }
+                if (destroyerLocation.contains(location)) {
+
+                    totalDamages[2]++;
+                    hits[2]++;
+                    hitCellList.add(location);
+                    missedShots--;
+                }
+                if (submarineLocation.contains(location)) {
+
+                    totalDamages[3]++;
+                    hits[3]++;
+                    hitCellList.add(location);
+                    missedShots--;
+                }
+                if (patrolBoatLocation.contains(location)) {
+
+                    totalDamages[4]++;
+                    hits[4]++;
+                    hitCellList.add(location);
+                    missedShots--;
+                }
+            }
+
+            damage.put("carrierHits", hits[0]);
+            damage.put("battleShipHits", hits[1]);
+            damage.put("destroyerHits", hits[2]);
+            damage.put("submarineHits", hits[3]);
+            damage.put("patrolboatHits", hits[4]);
+            damage.put("carrier", totalDamages[0]);
+            damage.put("battleship", totalDamages[1]);
+            damage.put("destroyer", totalDamages[2]);
+            damage.put("submarine", totalDamages[3]);
+            damage.put("patrolboat", totalDamages[4]);
+
+            dtoHit.put("turn", salvo.getTurnId());
+            dtoHit.put("hitLocations", hitCellList);
+            dtoHit.put("damages", damage);
+            dtoHit.put("missed", missedShots);
+
+            dtoSupremo.add(dtoHit);
+        }
+
+        return dtoSupremo;
+    }
+
+    private  Map<String, Object> getMapDTOs(Long gamePlayerId) {
+
+        // Trabajo los DTO desde GamePlayer
+        // Desde game puedo utilizar el gameDTO que tiene acceso a los demás DTO
+        Map<String, Object> data = makeGameDTO.gameDTO(gamePlayRepo.getById(gamePlayerId).getGame());
+        Map<String, Object> hits = new LinkedHashMap<>();
+
+        data.put("gameState", "PLAY");
+
+        data.put("ships", gamePlayRepo.getById(gamePlayerId).getShips().stream().map(makeShipDTO::shipDTO).collect(Collectors.toList()));
+
+        // Utilizando el GP consigo la ID de un jugasdor, luego su oponente y comienzo a cargar los datos de c/u
+        data.put("salvoes", gamePlayRepo.getById(gamePlayerId).getGame().getGamePlayer().stream().flatMap(player -> player.getSalvo().stream().map(makeSalvoDTO::salvoDTO)).collect(Collectors.toList()));
+
+        Optional<GamePlayer> gamePlayer = gamePlayRepo.findById(gamePlayerId);
+        Optional<GamePlayer> opponent = gamePlayer.get().getGame().getGamePlayer().stream().filter(gp -> gp.getId() != gamePlayer.get().getId()).findFirst();
+        if (opponent.isPresent()) {
+
+            hits.put("self", hitsAndSinks(opponent.get(), gamePlayer.get()));
+            hits.put("opponent", hitsAndSinks(gamePlayer.get(), opponent.get()));
+        } else {
+
+            hits.put("self", new ArrayList<>());
+            hits.put("opponent", new ArrayList<>());
+        }
+
+        data.put("hits", hits);
+
+        return data;
+    }
+
+    public List<String> findShipLocations(GamePlayer self, ShipType type) {
+
+        Ship response;
+        response = self.getShips().stream().filter(ship -> ship.getType().equals(type.name())).findFirst().orElse(null);
+        if (response == null) {
+            return new ArrayList<>();
+        } else {
+            return response.getShipLocations();
         }
     }
 
@@ -56,3 +186,4 @@ public class AppController {
     }
 
 }
+

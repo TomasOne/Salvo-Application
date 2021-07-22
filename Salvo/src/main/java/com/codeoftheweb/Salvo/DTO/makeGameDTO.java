@@ -23,7 +23,7 @@ public class makeGameDTO {
         Map<String, Object> gameDto = new LinkedHashMap<String, Object>();
         gameDto.put("id", game.getId());
         gameDto.put("created", game.getData());
-        gameDto.put("gameState", "PLACESHIPS");
+        gameDto.put("gameState", "WAITINGFOROPP");
         gameDto.put("gamePlayers", game.getGamePlayer().stream().map(makeGamePlayerDTO::gamePlayerDTO).collect(Collectors.toList()));
         return gameDto;
     }
