@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+
 import static java.util.stream.Collectors.toList;
 
 //el Entity es ubicado justo encima de la clase para que sus atributos se apliqun a esta
@@ -64,4 +64,11 @@ public class Game {
             return  gamePlayer;
     }
 
+    public Set<Score> getScores() {
+        return scores;
+    }
+
+    public void setScores(Set<Score> scores) {
+        this.scores = scores;
+    }
 }

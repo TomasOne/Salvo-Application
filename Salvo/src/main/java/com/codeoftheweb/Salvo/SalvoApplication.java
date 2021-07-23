@@ -56,10 +56,12 @@ public class SalvoApplication extends SpringBootServletInitializer {
 			Player player4 = new Player("prueba4", passwordEncoder.encode("contraseña"));
 			Game game1 = new Game(LocalDateTime.now());
 			Game game2 = new Game(LocalDateTime.now().plusHours(1));
+			Game gameSALVADOR = new Game (LocalDateTime.now());
 			GamePlayer gamePlayer1 = new GamePlayer(game1, player1, LocalDateTime.now());
 			GamePlayer gamePlayer2 = new GamePlayer(game1, player2, LocalDateTime.now());
 			GamePlayer gamePlayer3 = new GamePlayer(game2, player3, LocalDateTime.now());
 			GamePlayer gamePlayer4 = new GamePlayer(game2, player4, LocalDateTime.now());
+			GamePlayer gamePlayerSALVADOR = new GamePlayer(gameSALVADOR, player1, LocalDateTime.now());
 			Ship ship1 = new Ship(gamePlayer1, "destroyer", List.of("H2", "H3", "H4"));
 			Ship ship2 = new Ship(gamePlayer1, "submarine", List.of("E1", "F1", "G1"));
 			Ship ship3 = new Ship(gamePlayer1, "patrolboat", List.of("B5", "B4"));
@@ -83,11 +85,16 @@ public class SalvoApplication extends SpringBootServletInitializer {
 			repository.save(player2);
 			repository.save(player3);
 			repository.save(player4);
-			gameRepo.save(game1);
-			gameRepo.save(game2);
-			gameP_repo.save(gamePlayer1);
-			gameP_repo.save(gamePlayer2);
-			shipRepo.save(ship1);
+
+			//gameRepo.save(game1);
+			//gameRepo.save(game2);
+			//gameRepo.save(gameSALVADOR);
+
+			/*gameP_repo.save(gamePlayer1);
+			gameP_repo.save(gamePlayer2);*/
+			//gameP_repo.save(gamePlayerSALVADOR);
+
+			/*shipRepo.save(ship1);
 			shipRepo.save(ship2);
 			shipRepo.save(ship3);
 			shipRepo.save(ship4);
@@ -97,14 +104,16 @@ public class SalvoApplication extends SpringBootServletInitializer {
 			shipRepo.save(ship8);
 			shipRepo.save(ship9);
 			shipRepo.save(ship10);
+
 			salvoRepo.save(salvo1);
 			salvoRepo.save(salvo2);
 			salvoRepo.save(salvo3);
-			salvoRepo.save(salvo4);
-			scoreRepo.save(score1);
+			salvoRepo.save(salvo4);*/
+
+			/*scoreRepo.save(score1);
 			scoreRepo.save(score2);
 			scoreRepo.save(score3);
-			scoreRepo.save(score4);
+			scoreRepo.save(score4);*/
 		};
 	}
 

@@ -52,12 +52,28 @@ public class Util {
             boolean selfLost = getIfAllSunk(self, opponent.get());
             boolean opponentLost = getIfAllSunk(opponent.get(), self);
 
+            if(selfLost && opponentLost)
+            {
+                return GameState.TIE.name();
+            }
+
+            if (!selfLost && opponentLost)
+            {
+                return  GameState.WON.name();
+            }
+
+            if (!opponentLost && selfLost)
+            {
+                return GameState.LOST.name();
+            }
+
             return GameState.PLAY.name();
         }
         return GameState.UNDEFINED.name();
     }
 
     public static boolean getIfAllSunk(GamePlayer self, GamePlayer opponent) {//compruebo si todos los barcos fueron hundidos
+
 
         if (!opponent.getShips().isEmpty() && !self.getSalvo().isEmpty()) {
             return opponent.getSalvo().stream().flatMap(salvo -> salvo.getSalvoLocations().stream()).collect(Collectors.toList())

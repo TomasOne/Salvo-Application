@@ -1,6 +1,7 @@
 package com.codeoftheweb.Salvo.controller;
 
-import com.codeoftheweb.Salvo.DTO.*;
+import com.codeoftheweb.Salvo.DTO.makeGameDTO;
+import com.codeoftheweb.Salvo.DTO.makePlayerDTO;
 import com.codeoftheweb.Salvo.Utils.Util;
 import com.codeoftheweb.Salvo.model.Game;
 import com.codeoftheweb.Salvo.model.GamePlayer;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +63,27 @@ public class GameController {
     @PostMapping("/games")
     public ResponseEntity<Map<String, Object>> creategames(Authentication authentication)
     {
+        if (Util.isGuest(authentication)) {
+            return new ResponseEntity<>(Util.makeMap("error", "There is no current user logged in"), HttpStatus.FORBIDDEN);
+        }
+
+        Player player = playerRepo.findByUserName(authentication.getName());
+
+        if (player == null) {
+            return new ResponseEntity<>(Util.makeMap("error", "This player is not logged in"), HttpStatus.FORBIDDEN);
+        }
+
+        Game game = new Game(LocalDateTime.now());
+        gameRepo.save(game);
+        GamePlayer gamePlayer = new GamePlayer(game, player, LocalDateTime.now());
+        gamePlayRepo.save(gamePlayer);
+
+        return new ResponseEntity<>(Util.makeMap("gpid", gamePlayer.getId()), HttpStatus.CREATED);
+    }
+
+    /*@PostMapping("/games")
+    public ResponseEntity<Map<String, Object>> creategames(Authentication authentication)
+    {
         ResponseEntity<Map<String, Object>> response;
         Game game;
         Player player;
@@ -79,7 +100,7 @@ public class GameController {
             response = new ResponseEntity<>(Util.makeMap("error", "player not authorized"), HttpStatus.UNAUTHORIZED);
         }
         return response;
-    }
+    }*/
 
 
 
